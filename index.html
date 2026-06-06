@@ -31,6 +31,14 @@
   -webkit-filter:url(#force-amber);
   filter:url(#force-amber);
 }
+/* Border-only overlay layer: filter applies to a transparent-fill ring so only
+   the border pixels get forced to amber (alpha is preserved by feComposite "in"). */
+.__sx-border{position:absolute;inset:0;box-sizing:border-box;pointer-events:none;
+  opacity:0;transition:opacity .25s;-webkit-filter:url(#force-amber);filter:url(#force-amber)}
+.__sx-border.__sx-trig-always{opacity:1}
+.feature-card:hover .__sx-border.__sx-trig-hover,
+.acc-item.open .__sx-border.__sx-trig-open,
+.demo-tab.active .__sx-border.__sx-trig-active{opacity:1}
 a, a:link, a:visited { color: inherit; -webkit-tap-highlight-color: transparent; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -367,7 +375,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
       </div>
     </div>
     <div class="food-db">
-      <div class="food-db-title">Foods your coach knows across every region</div>
+      <div class="food-db-title">Examples of foods your coach knows, across every region</div>
       <div class="food-row"><div class="food-left"><span class="food-name">String Hoppers</span><span class="food-region">South Asia, Sri Lanka</span></div><div class="food-macros"><span class="pill pill-p">5g P</span><span class="pill pill-c">38g C</span><span class="pill pill-kcal">210</span></div></div>
       <div class="food-row"><div class="food-left"><span class="food-name">Jollof Rice</span><span class="food-region">West Africa, Nigeria and Ghana</span></div><div class="food-macros"><span class="pill pill-p">6g P</span><span class="pill pill-c">52g C</span><span class="pill pill-kcal">280</span></div></div>
       <div class="food-row"><div class="food-left"><span class="food-name">Nasi Goreng</span><span class="food-region">Southeast Asia, Indonesia</span></div><div class="food-macros"><span class="pill pill-p">9g P</span><span class="pill pill-c">45g C</span><span class="pill pill-kcal">260</span></div></div>
@@ -560,6 +568,34 @@ buildAccordion();
     el.appendChild(fg);
   }
 
+  // Border overlay: a transparent-fill ring drawn on top, forced to amber by
+  // the SVG filter (which preserves the source alpha), while the element's own
+  // border-color is hidden via inline style (wins over CSS class rules).
+  var BORDER_TARGETS = [
+    {sel: '.feature-card',  border: '1px solid rgba(245,166,35,0.3)',  trig: 'hover'},
+    {sel: '.acc-item',      border: '1px solid rgba(245,166,35,0.35)', trig: 'open'},
+    {sel: '.demo-tab',      border: '1px solid rgba(245,166,35,0.4)',  trig: 'active'},
+    {sel: '.survey-card',   border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'},
+    {sel: '.acc-badge',     border: '1px solid rgba(245,166,35,0.25)', trig: 'always'},
+    {sel: '.hero-badge',    border: '1px solid rgba(245,166,35,0.3)',  trig: 'always'},
+    {sel: '.demo-prompt',   border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'},
+    {sel: '.day-total',     border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'}
+  ];
+
+  function injectBorderOverlay(el, borderCSS, trig) {
+    if (el.hasAttribute('data-sx-border')) return;
+    el.setAttribute('data-sx-border', '1');
+    var cs = window.getComputedStyle(el);
+    if (cs.position === 'static') el.style.position = 'relative';
+    el.style.borderColor = 'transparent';
+    var ov = document.createElement('span');
+    ov.className = '__sx-border __sx-trig-' + trig;
+    ov.setAttribute('aria-hidden', 'true');
+    ov.style.border = borderCSS;
+    ov.style.borderRadius = cs.borderRadius;
+    el.appendChild(ov);
+  }
+
   function fix() {
     var btns = document.querySelectorAll(
       '.nav-cta,.form-btn,.demo-prompt-icon,' +
@@ -567,6 +603,12 @@ buildAccordion();
       'span[style*="background-color: #F5A623"]'
     );
     for (var i = 0; i < btns.length; i++) injectBtn(btns[i]);
+
+    for (var t = 0; t < BORDER_TARGETS.length; t++) {
+      var tgt = BORDER_TARGETS[t];
+      var els = document.querySelectorAll(tgt.sel);
+      for (var k = 0; k < els.length; k++) injectBorderOverlay(els[k], tgt.border, tgt.trig);
+    }
   }
 
   if (document.readyState === 'loading') {
