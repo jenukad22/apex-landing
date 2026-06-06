@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0A0A0F">
 <meta name="msapplication-navbutton-color" content="#0A0A0F">
@@ -20,11 +21,11 @@
   .nav-cta, .form-btn, .btn-amber { background-color: rgb(245,166,35) !important; }
 }
 /* Samsung browser color override reset */
-:root { color-scheme: dark; }
+:root { color-scheme: only light; }
 a, a:link, a:visited { color: inherit; -webkit-tap-highlight-color: transparent; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:#0A0A0F;color:#FFFFFF;font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6}
+body{color-scheme:only light;background:#0A0A0F;color:#FFFFFF;font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)}
 .nav-logo img{height:36px;width:auto;display:block}
