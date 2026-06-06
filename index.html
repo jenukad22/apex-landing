@@ -516,21 +516,44 @@ function toggleAcc(btn) {
 
 buildAccordion();
 
-// Samsung Internet Force Dark Mode — re-apply amber as gradient backgrounds and
-// -webkit-text-fill-color after the browser's dark mode algorithm has run.
+// Samsung Internet Force Dark Mode fix.
+// Gradients and background-color are rewritten by Samsung's rendering algorithm.
+// PNG raster images are explicitly skipped — Samsung can't know if a photo is
+// intentionally amber. We generate a 1×1 amber PNG via canvas and apply it as
+// background-image: url(...) so Samsung leaves it alone entirely.
 (function() {
   var AMBER = 'rgb(245,166,35)';
-  var GRAD  = 'linear-gradient(' + AMBER + ' 0%,' + AMBER + ' 100%)';
+
+  // Build a 1×1 amber pixel as a PNG data URL via canvas.
+  var amberUrl = null;
+  try {
+    var c = document.createElement('canvas');
+    c.width = 1; c.height = 1;
+    var cx = c.getContext('2d');
+    cx.fillStyle = AMBER;
+    cx.fillRect(0, 0, 1, 1);
+    amberUrl = c.toDataURL('image/png');
+  } catch(e) {}
+
   function fix() {
+    // --- Amber-background elements ---
     var bgEls = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
     for (var i = 0; i < bgEls.length; i++) {
-      bgEls[i].style.backgroundImage = GRAD;
-      bgEls[i].style.backgroundColor = AMBER;
-      bgEls[i].style.color = '#0A0A0F';
+      var el = bgEls[i];
+      if (amberUrl) {
+        // PNG data URI: Samsung's dark mode skips raster image backgrounds
+        el.style.backgroundImage = 'url(' + amberUrl + ')';
+        el.style.backgroundSize  = '100% 100%';
+        el.style.backgroundRepeat = 'no-repeat';
+      }
+      el.style.backgroundColor = AMBER;
+      el.style.color = '#0A0A0F';
+      el.style.webkitTextFillColor = '#0A0A0F';
     }
+    // --- Amber-text elements ---
     var textEls = document.querySelectorAll(
       '.stat-num,.section-label,.hero-title .accent,.hero-badge,' +
-      '.acc-badge,.acc-dot,.meal-name,.demo-stat-val,.day-total-label,' +
+      '.acc-badge,.meal-name,.demo-stat-val,.day-total-label,' +
       '.food-db-title,.survey-btn,.demo-tab.active,.pill-c'
     );
     for (var j = 0; j < textEls.length; j++) {
@@ -538,15 +561,16 @@ buildAccordion();
       textEls[j].style.webkitTextFillColor = AMBER;
     }
   }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', fix);
   } else {
     fix();
   }
-  // Run again after short delays to catch Samsung's late dark-mode pass
+  // Samsung's dark mode can run after initial paint — catch it with delays
   setTimeout(fix, 100);
-  setTimeout(fix, 500);
-  setTimeout(fix, 1500);
+  setTimeout(fix, 600);
+  setTimeout(fix, 2000);
 })();
 
 function handleSubmit() {
