@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="color-scheme: only light;">
 <head>
 <meta charset="UTF-8">
 <meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0A0A0F">
 <meta name="msapplication-navbutton-color" content="#0A0A0F">
@@ -14,11 +15,22 @@
 /* NO CSS VARIABLES - all values hardcoded for Samsung browser compatibility */
 /* Force light color scheme to prevent Samsung dark mode color override */
 @media (prefers-color-scheme: dark) {
-  .nav-cta, .form-btn, .btn-amber { filter: none !important; -webkit-filter: none !important; background-color: rgb(245,166,35) !important; color: #0A0A0F !important; }
+  html {
+    filter: invert(1) hue-rotate(180deg);
+    -webkit-filter: invert(1) hue-rotate(180deg);
+  }
+  img, video, iframe, canvas, svg, .apex-logo, [class*="logo"] {
+    filter: invert(1) hue-rotate(180deg);
+    -webkit-filter: invert(1) hue-rotate(180deg);
+  }
 }
 /* Samsung Internet specific override */
 @supports (-webkit-overflow-scrolling: touch) {
-  .nav-cta, .form-btn, .btn-amber { background-color: rgb(245,166,35) !important; }
+  .nav-cta, .form-btn, .btn-amber, button span { background-color: rgb(245,166,35) !important; color: #0A0A0F !important; }
+}
+/* Prevent forced colors */
+@media (forced-colors: active) {
+  button, button span, .nav-cta { background-color: rgb(245,166,35) !important; forced-color-adjust: none; }
 }
 /* Samsung browser color override reset */
 :root { color-scheme: only light; }
