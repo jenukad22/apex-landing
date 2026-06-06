@@ -27,7 +27,13 @@
   -webkit-filter:url(#force-amber);
   filter:url(#force-amber);
 }
-.hero-badge,.acc-badge {
+.hero-badge,.acc-badge,.survey-btn {
+  -webkit-filter:url(#force-amber);
+  filter:url(#force-amber);
+}
+/* Small amber accent bars/dots that use background/background-color/gradient —
+   Samsung rewrites these; force them back to amber after render. */
+.survey-card::before,.feature-card::before,.acc-accent,.hero-badge::before {
   -webkit-filter:url(#force-amber);
   filter:url(#force-amber);
 }
@@ -576,8 +582,6 @@ buildAccordion();
     {sel: '.acc-item',      border: '1px solid rgba(245,166,35,0.35)', trig: 'open'},
     {sel: '.demo-tab',      border: '1px solid rgba(245,166,35,0.4)',  trig: 'active'},
     {sel: '.survey-card',   border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'},
-    {sel: '.acc-badge',     border: '1px solid rgba(245,166,35,0.25)', trig: 'always'},
-    {sel: '.hero-badge',    border: '1px solid rgba(245,166,35,0.3)',  trig: 'always'},
     {sel: '.demo-prompt',   border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'},
     {sel: '.day-total',     border: '1px solid rgba(245,166,35,0.2)',  trig: 'always'}
   ];
