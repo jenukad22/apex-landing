@@ -22,7 +22,8 @@
    Samsung modifies CSS properties before render; SVG filters execute during render. */
 .stat-num,.section-label,.hero-title .accent,.meal-name,
 .demo-stat-val,.day-total-label,.food-db-title,
-.acc-name,.demo-tab.active,.pill-c {
+.acc-name,.demo-tab.active,.pill-c,.acc-dot,
+.survey-title .accent,.section-title span[style*="245,166,35"] {
   -webkit-filter:url(#force-amber);
   filter:url(#force-amber);
 }
@@ -42,8 +43,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-cta{-webkit-appearance:none;appearance:none;filter:none;-webkit-filter:none}
 
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:100px 24px 60px;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(245,166,35,0.08) 0%,transparent 70%)}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(245,166,35,0.14) 0%,transparent 70%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px);background-size:60px 60px}
 .hero-inner{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;width:100%}
 .hero-left{display:flex;flex-direction:column;gap:24px}
 
@@ -560,7 +561,11 @@ buildAccordion();
   }
 
   function fix() {
-    var btns = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
+    var btns = document.querySelectorAll(
+      '.nav-cta,.form-btn,.demo-prompt-icon,' +
+      'span[style*="background-color:#F5A623"],' +
+      'span[style*="background-color: #F5A623"]'
+    );
     for (var i = 0; i < btns.length; i++) injectBtn(btns[i]);
   }
 
