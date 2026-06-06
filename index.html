@@ -16,16 +16,20 @@
 /* Samsung Internet Force Dark Mode fix:
    Use background-image gradients for amber fills — Samsung's algorithm skips
    background-image (can't know if it's a photo) but rewrites background-color. */
-/* Samsung Internet specific override */
-@supports (-webkit-overflow-scrolling: touch) {
-  .nav-cta, .form-btn, .btn-amber, button span { background-color: rgb(245,166,35) !important; color: #0A0A0F !important; }
-}
-/* Prevent forced colors */
-@media (forced-colors: active) {
-  button, button span, .nav-cta { background-color: rgb(245,166,35) !important; forced-color-adjust: none; }
-}
 /* Samsung browser color override reset */
 :root { color-scheme: only light; }
+/* SVG feFlood filter forces amber pixels AFTER Samsung has rewritten CSS colour values.
+   Samsung modifies CSS properties before render; SVG filters execute during render. */
+.stat-num,.section-label,.hero-title .accent,.meal-name,
+.demo-stat-val,.day-total-label,.food-db-title,
+.acc-name,.demo-tab.active,.pill-c {
+  -webkit-filter:url(#force-amber);
+  filter:url(#force-amber);
+}
+.hero-badge,.acc-badge {
+  -webkit-filter:url(#force-amber);
+  filter:url(#force-amber);
+}
 a, a:link, a:visited { color: inherit; -webkit-tap-highlight-color: transparent; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -516,128 +520,48 @@ function toggleAcc(btn) {
 
 buildAccordion();
 
-// Samsung Internet Force Dark Mode fix — nuclear edition.
-//
-// Samsung processes background-color, CSS gradients, and even PNG data URIs
-// in background-image. What it CANNOT recolor is an actual <img> DOM element
-// (Samsung explicitly exempts these to avoid recoloring user photos).
-//
-// Strategy:
-//   Buttons  → inject a position:absolute <img> (amber PNG via canvas) as the
-//              visual background, wrap existing content in a z-index:1 span.
-//   Amber text → replace each text node with an inline <svg><text> element
-//              whose fill= attribute Samsung does not rewrite.
+// Samsung Internet Force Dark Mode fix.
+// Samsung rewrites CSS colour properties (background-color, color) before render.
+// SVG feFlood filters run DURING render, after CSS is resolved — so they output
+// the correct pixel colour regardless of what Samsung wrote to the CSS properties.
+// feFlood creates a solid amber rectangle; feComposite "in" masks it to the
+// element's own alpha channel, so only the visible pixels are forced to amber.
 (function() {
-  var AMBER     = 'rgb(245,166,35)';
-  var AMBER_HEX = '#F5A623';
-  var DARK      = '#0A0A0F';
+  var AMBER = 'rgb(245,166,35)';
+  var DARK  = '#0A0A0F';
+  var FA    = 'url(#force-amber)';  // SVG filter id defined in HTML below
+  var FD    = 'url(#force-dark)';
 
-  // --- Build amber PNG src via canvas ---
-  var amberSrc = null;
-  try {
-    var cv = document.createElement('canvas');
-    cv.width = 4; cv.height = 4;
-    var cx = cv.getContext('2d');
-    cx.fillStyle = AMBER;
-    cx.fillRect(0, 0, 4, 4);
-    amberSrc = cv.toDataURL('image/png');
-  } catch(e) {}
+  function injectBtn(el) {
+    if (el.querySelector('.__sx-bg')) return;
 
-  // --- Inject <img> background into an element ---
-  function injectAmberBg(el) {
-    if (el.querySelector('.__sx-bg')) return; // already done
-    el.style.position   = 'relative';
-    el.style.overflow   = 'hidden';
-    el.style.backgroundImage = 'none';
+    el.style.position        = 'relative';
+    el.style.overflow        = 'hidden';
     el.style.backgroundColor = 'transparent';
+    el.style.backgroundImage = 'none';
 
-    // Background <img> — Samsung explicitly skips <img> src recoloring
-    if (amberSrc) {
-      var bg = document.createElement('img');
-      bg.className = '__sx-bg';
-      bg.src = amberSrc;
-      bg.setAttribute('aria-hidden', 'true');
-      bg.setAttribute('alt', '');
-      bg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;' +
-                         'display:block;object-fit:fill;z-index:0;pointer-events:none;' +
-                         'border:none;margin:0;padding:0;max-width:none';
-      el.insertBefore(bg, el.firstChild);
-    }
+    // Background span — force-amber filter converts whatever Samsung did → amber
+    var bg = document.createElement('span');
+    bg.className = '__sx-bg';
+    bg.setAttribute('aria-hidden', 'true');
+    bg.style.cssText = 'position:absolute;inset:0;top:0;left:0;right:0;bottom:0;' +
+                       'display:block;background:' + AMBER + ';z-index:0;' +
+                       '-webkit-filter:' + FA + ';filter:' + FA;
+    el.insertBefore(bg, el.firstChild);
 
-    // Wrap remaining children so their z-index sits above the bg img
-    var wrap = document.createElement('span');
-    wrap.className = '__sx-fg';
-    wrap.style.cssText = 'position:relative;z-index:1;display:inherit;' +
-                         'align-items:inherit;justify-content:inherit;' +
-                         'width:100%;color:' + DARK + ';-webkit-text-fill-color:' + DARK;
-    var children = Array.prototype.slice.call(el.childNodes);
-    for (var k = 0; k < children.length; k++) {
-      if (children[k] !== el.querySelector('.__sx-bg')) {
-        wrap.appendChild(children[k]);
-      }
-    }
-    el.appendChild(wrap);
-  }
-
-  // --- Replace an element's text with inline SVG ---
-  // Samsung does not rewrite SVG fill= attributes on inline <svg> elements.
-  function svgText(el, fill) {
-    if (el.querySelector('.__sx-svg')) return;
-    var text = el.textContent || '';
-    if (!text.trim()) return;
-    var fs   = window.getComputedStyle(el).fontSize  || '14px';
-    var ff   = window.getComputedStyle(el).fontFamily || 'sans-serif';
-    var fw   = window.getComputedStyle(el).fontWeight || '400';
-    var ls   = window.getComputedStyle(el).letterSpacing || '0px';
-    // Measure text width
-    var mc = document.createElement('canvas');
-    var mctx = mc.getContext('2d');
-    mctx.font = fw + ' ' + fs + ' ' + ff;
-    var w = Math.ceil(mctx.measureText(text).width) + 4;
-    var fsPx = parseFloat(fs);
-    var h = Math.ceil(fsPx * 1.3);
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.className.baseVal = '__sx-svg';
-    svg.setAttribute('width',  w);
-    svg.setAttribute('height', h);
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    svg.style.cssText = 'display:inline-block;vertical-align:middle;overflow:visible';
-    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    t.setAttribute('x', '0');
-    t.setAttribute('y', Math.ceil(fsPx) + 'px');
-    t.setAttribute('fill', fill);
-    t.setAttribute('font-size', fs);
-    t.setAttribute('font-family', ff);
-    t.setAttribute('font-weight', fw);
-    t.setAttribute('letter-spacing', ls);
-    t.textContent = text;
-    svg.appendChild(t);
-    el.textContent = '';
-    el.appendChild(svg);
+    // Foreground span — force-dark filter keeps text dark regardless of Samsung
+    var fg = document.createElement('span');
+    fg.className = '__sx-fg';
+    fg.style.cssText = 'position:relative;z-index:1;display:inherit;width:100%;' +
+                       'align-items:inherit;justify-content:inherit;' +
+                       'color:' + DARK + ';-webkit-filter:' + FD + ';filter:' + FD;
+    while (el.childNodes.length > 1) fg.appendChild(el.childNodes[1]);
+    el.appendChild(fg);
   }
 
   function fix() {
-    // Buttons and icon backgrounds
-    var bgSels = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
-    for (var i = 0; i < bgSels.length; i++) injectAmberBg(bgSels[i]);
-
-    // Amber text — SVG replacement for key visible elements
-    var txtSels = document.querySelectorAll(
-      '.stat-num,.section-label,.hero-title .accent,' +
-      '.meal-name,.demo-stat-val,.day-total-label,.food-db-title'
-    );
-    for (var j = 0; j < txtSels.length; j++) {
-      svgText(txtSels[j], AMBER_HEX);
-    }
-
-    // Lighter touch for inline amber text (badge, labels) — just force the colour
-    var colorSels = document.querySelectorAll(
-      '.hero-badge,.acc-badge,.survey-btn,.demo-tab.active,.pill-c'
-    );
-    for (var m = 0; m < colorSels.length; m++) {
-      colorSels[m].style.color = AMBER;
-      colorSels[m].style.webkitTextFillColor = AMBER;
-    }
+    var btns = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
+    for (var i = 0; i < btns.length; i++) injectBtn(btns[i]);
   }
 
   if (document.readyState === 'loading') {
@@ -647,8 +571,13 @@ buildAccordion();
   }
   setTimeout(fix, 150);
   setTimeout(fix, 800);
-  setTimeout(fix, 2500);
 })();
+
+// Patch handleSubmit to update the __sx-fg span instead of btn.textContent
+// so our injected button structure survives the state changes.
+function _getBtnFg(btn) {
+  return btn.querySelector('.__sx-fg') || btn;
+}
 
 function handleSubmit() {
   var name = document.getElementById("fname").value.trim();
@@ -660,7 +589,9 @@ function handleSubmit() {
     return;
   }
   var btn = document.querySelector(".form-btn");
-  btn.textContent = "SENDING...";
+  var fg = _getBtnFg(btn);
+  var bg = btn.querySelector(".__sx-bg");
+  fg.textContent = "SENDING...";
   btn.disabled = true;
   fetch("https://formspree.io/f/xbdeddjv", {
     method: "POST",
@@ -672,20 +603,41 @@ function handleSubmit() {
       document.querySelector(".waitlist-form").style.pointerEvents = "none";
       document.querySelector(".waitlist-form").style.opacity = "0.6";
       document.getElementById("successMsg").style.display = "block";
-      btn.textContent = "YOU ARE IN";
-      btn.style.background = "#2ECC71";
+      fg.textContent = "YOU ARE IN";
+      if (bg) bg.style.background = "#2ECC71";
+      else btn.style.background = "#2ECC71";
     } else {
-      btn.textContent = "GET EARLY ACCESS";
+      fg.textContent = "GET EARLY ACCESS →";
       btn.disabled = false;
       alert("Something went wrong. Please try again.");
     }
   })
   .catch(function() {
-    btn.textContent = "GET EARLY ACCESS";
+    fg.textContent = "GET EARLY ACCESS →";
     btn.disabled = false;
     alert("Something went wrong. Please try again.");
   });
 }
 </script>
+
+<!-- SVG filter definitions for Samsung Internet Force Dark Mode fix.
+     #force-amber: feFlood fills with amber, feComposite "in" masks to element alpha
+                   → every visible pixel becomes amber, transparent stays transparent.
+     #force-dark:  same principle but outputs near-black for button text. -->
+<svg aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
+  <defs>
+    <filter id="force-amber" x="0" y="0" width="1" height="1"
+            color-interpolation-filters="sRGB">
+      <feFlood flood-color="rgb(245,166,35)" flood-opacity="1" result="c"/>
+      <feComposite in="c" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="force-dark" x="0" y="0" width="1" height="1"
+            color-interpolation-filters="sRGB">
+      <feFlood flood-color="#0A0A0F" flood-opacity="1" result="c"/>
+      <feComposite in="c" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+</svg>
 </body>
 </html>
