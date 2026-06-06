@@ -516,49 +516,127 @@ function toggleAcc(btn) {
 
 buildAccordion();
 
-// Samsung Internet Force Dark Mode fix.
-// Gradients and background-color are rewritten by Samsung's rendering algorithm.
-// PNG raster images are explicitly skipped — Samsung can't know if a photo is
-// intentionally amber. We generate a 1×1 amber PNG via canvas and apply it as
-// background-image: url(...) so Samsung leaves it alone entirely.
+// Samsung Internet Force Dark Mode fix — nuclear edition.
+//
+// Samsung processes background-color, CSS gradients, and even PNG data URIs
+// in background-image. What it CANNOT recolor is an actual <img> DOM element
+// (Samsung explicitly exempts these to avoid recoloring user photos).
+//
+// Strategy:
+//   Buttons  → inject a position:absolute <img> (amber PNG via canvas) as the
+//              visual background, wrap existing content in a z-index:1 span.
+//   Amber text → replace each text node with an inline <svg><text> element
+//              whose fill= attribute Samsung does not rewrite.
 (function() {
-  var AMBER = 'rgb(245,166,35)';
+  var AMBER     = 'rgb(245,166,35)';
+  var AMBER_HEX = '#F5A623';
+  var DARK      = '#0A0A0F';
 
-  // Build a 1×1 amber pixel as a PNG data URL via canvas.
-  var amberUrl = null;
+  // --- Build amber PNG src via canvas ---
+  var amberSrc = null;
   try {
-    var c = document.createElement('canvas');
-    c.width = 1; c.height = 1;
-    var cx = c.getContext('2d');
+    var cv = document.createElement('canvas');
+    cv.width = 4; cv.height = 4;
+    var cx = cv.getContext('2d');
     cx.fillStyle = AMBER;
-    cx.fillRect(0, 0, 1, 1);
-    amberUrl = c.toDataURL('image/png');
+    cx.fillRect(0, 0, 4, 4);
+    amberSrc = cv.toDataURL('image/png');
   } catch(e) {}
 
-  function fix() {
-    // --- Amber-background elements ---
-    var bgEls = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
-    for (var i = 0; i < bgEls.length; i++) {
-      var el = bgEls[i];
-      if (amberUrl) {
-        // PNG data URI: Samsung's dark mode skips raster image backgrounds
-        el.style.backgroundImage = 'url(' + amberUrl + ')';
-        el.style.backgroundSize  = '100% 100%';
-        el.style.backgroundRepeat = 'no-repeat';
-      }
-      el.style.backgroundColor = AMBER;
-      el.style.color = '#0A0A0F';
-      el.style.webkitTextFillColor = '#0A0A0F';
+  // --- Inject <img> background into an element ---
+  function injectAmberBg(el) {
+    if (el.querySelector('.__sx-bg')) return; // already done
+    el.style.position   = 'relative';
+    el.style.overflow   = 'hidden';
+    el.style.backgroundImage = 'none';
+    el.style.backgroundColor = 'transparent';
+
+    // Background <img> — Samsung explicitly skips <img> src recoloring
+    if (amberSrc) {
+      var bg = document.createElement('img');
+      bg.className = '__sx-bg';
+      bg.src = amberSrc;
+      bg.setAttribute('aria-hidden', 'true');
+      bg.setAttribute('alt', '');
+      bg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;' +
+                         'display:block;object-fit:fill;z-index:0;pointer-events:none;' +
+                         'border:none;margin:0;padding:0;max-width:none';
+      el.insertBefore(bg, el.firstChild);
     }
-    // --- Amber-text elements ---
-    var textEls = document.querySelectorAll(
-      '.stat-num,.section-label,.hero-title .accent,.hero-badge,' +
-      '.acc-badge,.meal-name,.demo-stat-val,.day-total-label,' +
-      '.food-db-title,.survey-btn,.demo-tab.active,.pill-c'
+
+    // Wrap remaining children so their z-index sits above the bg img
+    var wrap = document.createElement('span');
+    wrap.className = '__sx-fg';
+    wrap.style.cssText = 'position:relative;z-index:1;display:inherit;' +
+                         'align-items:inherit;justify-content:inherit;' +
+                         'width:100%;color:' + DARK + ';-webkit-text-fill-color:' + DARK;
+    var children = Array.prototype.slice.call(el.childNodes);
+    for (var k = 0; k < children.length; k++) {
+      if (children[k] !== el.querySelector('.__sx-bg')) {
+        wrap.appendChild(children[k]);
+      }
+    }
+    el.appendChild(wrap);
+  }
+
+  // --- Replace an element's text with inline SVG ---
+  // Samsung does not rewrite SVG fill= attributes on inline <svg> elements.
+  function svgText(el, fill) {
+    if (el.querySelector('.__sx-svg')) return;
+    var text = el.textContent || '';
+    if (!text.trim()) return;
+    var fs   = window.getComputedStyle(el).fontSize  || '14px';
+    var ff   = window.getComputedStyle(el).fontFamily || 'sans-serif';
+    var fw   = window.getComputedStyle(el).fontWeight || '400';
+    var ls   = window.getComputedStyle(el).letterSpacing || '0px';
+    // Measure text width
+    var mc = document.createElement('canvas');
+    var mctx = mc.getContext('2d');
+    mctx.font = fw + ' ' + fs + ' ' + ff;
+    var w = Math.ceil(mctx.measureText(text).width) + 4;
+    var fsPx = parseFloat(fs);
+    var h = Math.ceil(fsPx * 1.3);
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.className.baseVal = '__sx-svg';
+    svg.setAttribute('width',  w);
+    svg.setAttribute('height', h);
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.style.cssText = 'display:inline-block;vertical-align:middle;overflow:visible';
+    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('x', '0');
+    t.setAttribute('y', Math.ceil(fsPx) + 'px');
+    t.setAttribute('fill', fill);
+    t.setAttribute('font-size', fs);
+    t.setAttribute('font-family', ff);
+    t.setAttribute('font-weight', fw);
+    t.setAttribute('letter-spacing', ls);
+    t.textContent = text;
+    svg.appendChild(t);
+    el.textContent = '';
+    el.appendChild(svg);
+  }
+
+  function fix() {
+    // Buttons and icon backgrounds
+    var bgSels = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
+    for (var i = 0; i < bgSels.length; i++) injectAmberBg(bgSels[i]);
+
+    // Amber text — SVG replacement for key visible elements
+    var txtSels = document.querySelectorAll(
+      '.stat-num,.section-label,.hero-title .accent,' +
+      '.meal-name,.demo-stat-val,.day-total-label,.food-db-title'
     );
-    for (var j = 0; j < textEls.length; j++) {
-      textEls[j].style.color = AMBER;
-      textEls[j].style.webkitTextFillColor = AMBER;
+    for (var j = 0; j < txtSels.length; j++) {
+      svgText(txtSels[j], AMBER_HEX);
+    }
+
+    // Lighter touch for inline amber text (badge, labels) — just force the colour
+    var colorSels = document.querySelectorAll(
+      '.hero-badge,.acc-badge,.survey-btn,.demo-tab.active,.pill-c'
+    );
+    for (var m = 0; m < colorSels.length; m++) {
+      colorSels[m].style.color = AMBER;
+      colorSels[m].style.webkitTextFillColor = AMBER;
     }
   }
 
@@ -567,10 +645,9 @@ buildAccordion();
   } else {
     fix();
   }
-  // Samsung's dark mode can run after initial paint — catch it with delays
-  setTimeout(fix, 100);
-  setTimeout(fix, 600);
-  setTimeout(fix, 2000);
+  setTimeout(fix, 150);
+  setTimeout(fix, 800);
+  setTimeout(fix, 2500);
 })();
 
 function handleSubmit() {
