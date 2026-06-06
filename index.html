@@ -13,17 +13,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* NO CSS VARIABLES - all values hardcoded for Samsung browser compatibility */
-/* Force light color scheme to prevent Samsung dark mode color override */
-@media (prefers-color-scheme: dark) {
-  html {
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-  img, video, iframe, canvas, svg, .apex-logo, [class*="logo"] {
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-}
+/* Samsung Internet Force Dark Mode fix:
+   Use background-image gradients for amber fills — Samsung's algorithm skips
+   background-image (can't know if it's a photo) but rewrites background-color. */
 /* Samsung Internet specific override */
 @supports (-webkit-overflow-scrolling: touch) {
   .nav-cta, .form-btn, .btn-amber, button span { background-color: rgb(245,166,35) !important; color: #0A0A0F !important; }
@@ -41,7 +33,7 @@ body{color-scheme:only light;background:#0A0A0F;color:#FFFFFF;font-family:'DM Sa
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)}
 .nav-logo img{height:36px;width:auto;display:block}
-.nav-cta{background:rgb(245,166,35);color:#0A0A0F;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:6px;text-decoration:none;white-space:nowrap;display:inline-block}
+.nav-cta{background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);color:#0A0A0F;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:6px;text-decoration:none;white-space:nowrap;display:inline-block}
 .nav-cta:hover{opacity:.85}
 .nav-cta{-webkit-appearance:none;appearance:none;filter:none;-webkit-filter:none}
 
@@ -51,13 +43,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hero-inner{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;width:100%}
 .hero-left{display:flex;flex-direction:column;gap:24px}
 
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:500;color:rgb(245,166,35);letter-spacing:1px;text-transform:uppercase;width:fit-content}
-.hero-badge::before{content:'';width:6px;height:6px;background:rgb(245,166,35);border-radius:50%;-webkit-animation:pulse 2s infinite;animation:pulse 2s infinite;flex-shrink:0}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:500;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);letter-spacing:1px;text-transform:uppercase;width:fit-content}
+.hero-badge::before{content:'';width:6px;height:6px;background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);border-radius:50%;-webkit-animation:pulse 2s infinite;animation:pulse 2s infinite;flex-shrink:0}
 @-webkit-keyframes pulse{0%,100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}50%{opacity:.5;-webkit-transform:scale(1.3);transform:scale(1.3)}}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,6vw,84px);line-height:.95;letter-spacing:2px;color:#FFFFFF}
-.hero-title .accent{color:rgb(245,166,35)}
+.hero-title .accent{color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35)}
 .hero-sub{font-size:16px;color:rgba(255,255,255,0.45);line-height:1.7;font-weight:300}
 .hero-sub strong{color:#FFFFFF;font-weight:500}
 
@@ -69,7 +61,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .form-input:focus{border-color:rgba(245,166,35,0.5)}
 .form-select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:13px 16px;color:rgba(255,255,255,0.55);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
 .form-select option{background:#1A1A24;color:#FFFFFF}
-.form-btn{background:rgb(245,166,35);color:#0A0A0F;border:none;border-radius:8px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;width:100%;display:block}
+.form-btn{background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);color:#0A0A0F;border:none;border-radius:8px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;width:100%;display:block}
 .form-btn:hover{opacity:.9}
 .form-note{font-size:12px;color:rgba(255,255,255,0.3)}
 .success-msg{display:none;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:14px 18px;color:#2ECC71;font-size:14px;font-weight:500}
@@ -97,11 +89,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .phone-scroll-wrap{display:none}
 
 .stats-bar{background:#111118;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);padding:32px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:44px;color:rgb(245,166,35);line-height:1;letter-spacing:2px}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:44px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);line-height:1;letter-spacing:2px}
 .stat-label{font-size:12px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
 
 .features{padding:80px 24px;max-width:1200px;margin:0 auto}
-.section-label{font-family:'Space Mono',monospace;font-size:11px;color:rgb(245,166,35);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
+.section-label{font-family:'Space Mono',monospace;font-size:11px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,56px);letter-spacing:2px;line-height:1;margin-bottom:48px;color:#FFFFFF}
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .feature-card{background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:28px;position:relative;overflow:hidden}
@@ -123,7 +115,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .acc-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:#FFFFFF}
 .acc-tag{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-family:'DM Sans',sans-serif}
 .acc-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.acc-badge{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:rgb(245,166,35);font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;font-family:'Space Mono',monospace}
+.acc-badge{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;font-family:'Space Mono',monospace}
 .acc-chevron{color:rgba(255,255,255,0.45);font-size:12px;-webkit-transition:-webkit-transform .25s;transition:transform .25s;display:inline-block}
 .acc-item.open .acc-chevron{-webkit-transform:rotate(180deg);transform:rotate(180deg)}
 .acc-accent{height:2px;background:linear-gradient(90deg,rgb(245,166,35),transparent);display:none}
@@ -133,7 +125,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .acc-sub-list{display:flex;flex-direction:column;gap:8px}
 .acc-sub-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
 .acc-sub-item:last-child{border-bottom:none}
-.acc-dot{width:5px;height:5px;border-radius:50%;background:rgb(245,166,35);margin-top:7px;flex-shrink:0}
+.acc-dot{width:5px;height:5px;border-radius:50%;background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);margin-top:7px;flex-shrink:0}
 .acc-sub-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.65}
 .acc-sub-text strong{color:#FFFFFF;font-weight:500}
 
@@ -141,7 +133,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .demo-inner{max-width:800px;margin:0 auto;position:relative}
 .demo-header{text-align:center;margin-bottom:40px}
 .demo-prompt{background:#1A1A24;border:1px solid rgba(245,166,35,0.2);border-radius:14px;padding:18px 20px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start}
-.demo-prompt-icon{background:rgb(245,166,35);color:#0A0A0F;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px}
+.demo-prompt-icon{background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);color:#0A0A0F;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px}
 .demo-prompt-text{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.6;font-style:italic}
 .demo-prompt-text strong{color:#FFFFFF;font-style:normal}
 .demo-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
@@ -151,12 +143,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .demo-card{background:#0A0A0F;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:24px}
 .demo-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.07)}
 .demo-stat{text-align:center}
-.demo-stat-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:rgb(245,166,35);letter-spacing:1px}
+.demo-stat-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);letter-spacing:1px}
 .demo-stat-label{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 .meal{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.07)}
 .meal:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.meal-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:rgb(245,166,35)}
+.meal-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35)}
 .meal-total{font-size:11px;color:rgba(255,255,255,0.45);font-family:'Space Mono',monospace}
 .meal-items{display:flex;flex-direction:column;gap:4px}
 .meal-item{font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px}
@@ -168,7 +160,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .pill-f{background:rgba(99,102,241,0.15);color:#818CF8}
 .pill-kcal{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.45)}
 .day-total{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:8px}
-.day-total-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:rgb(245,166,35)}
+.day-total-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35)}
 .day-total-macros{display:flex;gap:6px;flex-wrap:wrap}
 
 .survey-section{padding:60px 24px;background:#111118;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
@@ -179,7 +171,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .survey-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,42px);letter-spacing:2px;margin-bottom:12px;color:#FFFFFF}
 .survey-title .accent{color:rgb(245,166,35)}
 .survey-desc{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
-.survey-btn{display:inline-flex;align-items:center;gap:10px;background:transparent;border:1.5px solid rgb(245,166,35);color:rgb(245,166,35);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;padding:14px 32px;border-radius:8px;text-decoration:none}
+.survey-btn{display:inline-flex;align-items:center;gap:10px;background:transparent;border:1.5px solid rgb(245,166,35);color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;padding:14px 32px;border-radius:8px;text-decoration:none}
 .survey-btn:hover{background:rgba(245,166,35,0.1)}
 .survey-note{font-size:12px;color:rgba(255,255,255,0.25);margin-top:14px}
 
@@ -189,7 +181,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .culture-tag{background:#1A1A24;border:1px solid rgba(255,255,255,0.07);border-radius:999px;padding:7px 16px;font-size:13px;color:rgba(255,255,255,0.45)}
 .culture-tag:hover{border-color:rgba(245,166,35,0.4);color:rgb(245,166,35)}
 .food-db{background:#1A1A24;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:20px}
-.food-db-title{font-size:10px;color:rgb(245,166,35);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;font-family:'Space Mono',monospace}
+.food-db-title{font-size:10px;color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;font-family:'Space Mono',monospace}
 .food-row{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:11px 14px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .food-row:last-child{margin-bottom:0}
 .food-left{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -267,7 +259,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
         </div>
         <select class="form-select" id="fcountry"><option value="" disabled selected>Where are you from?</option><option>Afghanistan</option><option>Albania</option><option>Algeria</option><option>Andorra</option><option>Angola</option><option>Antigua and Barbuda</option><option>Argentina</option><option>Armenia</option><option>Australia</option><option>Austria</option><option>Azerbaijan</option><option>Bahamas</option><option>Bahrain</option><option>Bangladesh</option><option>Barbados</option><option>Belarus</option><option>Belgium</option><option>Belize</option><option>Benin</option><option>Bhutan</option><option>Bolivia</option><option>Bosnia and Herzegovina</option><option>Botswana</option><option>Brazil</option><option>Brunei</option><option>Bulgaria</option><option>Burkina Faso</option><option>Burundi</option><option>Cambodia</option><option>Cameroon</option><option>Canada</option><option>Cape Verde</option><option>Central African Republic</option><option>Chad</option><option>Chile</option><option>China</option><option>Colombia</option><option>Comoros</option><option>Congo</option><option>Costa Rica</option><option>Croatia</option><option>Cuba</option><option>Cyprus</option><option>Czech Republic</option><option>Denmark</option><option>Djibouti</option><option>Dominica</option><option>Dominican Republic</option><option>Ecuador</option><option>Egypt</option><option>El Salvador</option><option>Equatorial Guinea</option><option>Eritrea</option><option>Estonia</option><option>Eswatini</option><option>Ethiopia</option><option>Fiji</option><option>Finland</option><option>France</option><option>Gabon</option><option>Gambia</option><option>Georgia</option><option>Germany</option><option>Ghana</option><option>Greece</option><option>Grenada</option><option>Guatemala</option><option>Guinea</option><option>Guinea-Bissau</option><option>Guyana</option><option>Haiti</option><option>Honduras</option><option>Hungary</option><option>Iceland</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Jordan</option><option>Kazakhstan</option><option>Kenya</option><option>Kiribati</option><option>Kuwait</option><option>Kyrgyzstan</option><option>Laos</option><option>Latvia</option><option>Lebanon</option><option>Lesotho</option><option>Liberia</option><option>Libya</option><option>Liechtenstein</option><option>Lithuania</option><option>Luxembourg</option><option>Madagascar</option><option>Malawi</option><option>Malaysia</option><option>Maldives</option><option>Mali</option><option>Malta</option><option>Marshall Islands</option><option>Mauritania</option><option>Mauritius</option><option>Mexico</option><option>Micronesia</option><option>Moldova</option><option>Monaco</option><option>Mongolia</option><option>Montenegro</option><option>Morocco</option><option>Mozambique</option><option>Myanmar</option><option>Namibia</option><option>Nauru</option><option>Nepal</option><option>Netherlands</option><option>New Zealand</option><option>Nicaragua</option><option>Niger</option><option>Nigeria</option><option>North Korea</option><option>North Macedonia</option><option>Norway</option><option>Oman</option><option>Pakistan</option><option>Palau</option><option>Panama</option><option>Papua New Guinea</option><option>Paraguay</option><option>Peru</option><option>Philippines</option><option>Poland</option><option>Portugal</option><option>Qatar</option><option>Romania</option><option>Russia</option><option>Rwanda</option><option>Saint Kitts and Nevis</option><option>Saint Lucia</option><option>Saint Vincent and the Grenadines</option><option>Samoa</option><option>San Marino</option><option>Sao Tome and Principe</option><option>Saudi Arabia</option><option>Senegal</option><option>Serbia</option><option>Seychelles</option><option>Sierra Leone</option><option>Singapore</option><option>Slovakia</option><option>Slovenia</option><option>Solomon Islands</option><option>Somalia</option><option>South Africa</option><option>South Korea</option><option>South Sudan</option><option>Spain</option><option>Sri Lanka</option><option>Sudan</option><option>Suriname</option><option>Sweden</option><option>Switzerland</option><option>Syria</option><option>Taiwan</option><option>Tajikistan</option><option>Tanzania</option><option>Thailand</option><option>Timor-Leste</option><option>Togo</option><option>Tonga</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Turkmenistan</option><option>Tuvalu</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates</option><option>United Kingdom</option><option>United States</option><option>Uruguay</option><option>Uzbekistan</option><option>Vanuatu</option><option>Vatican City</option><option>Venezuela</option><option>Vietnam</option><option>Yemen</option><option>Zambia</option><option>Zimbabwe</option></select>
         <select class="form-select" id="fgoal"><option value="" disabled selected>What is your biggest struggle?</option><option>Losing fat</option><option>Building muscle</option><option>Eating right for my culture</option><option>Staying consistent</option><option>I don't know where to start</option><option>Other</option></select>
-       <button class="form-btn" onclick="handleSubmit()" style="background-color:#F5A623;color:#0A0A0F;border:none;border-radius:8px;padding:16px;font-size:20px;letter-spacing:2px;cursor:pointer;width:100%;display:block">GET EARLY ACCESS &#8594;</button>
+       <button class="form-btn" onclick="handleSubmit()" style="background:linear-gradient(#F5A623 0%,#F5A623 100%);background-color:#F5A623;color:#0A0A0F;border:none;border-radius:8px;padding:16px;font-size:20px;letter-spacing:2px;cursor:pointer;width:100%;display:block">GET EARLY ACCESS &#8594;</button>
         <div class="success-msg" id="successMsg">&#10003; You are on the list! We will reach out soon.</div>
         <p class="form-note">&#128274; No spam. No credit card. Just early access.</p>
       </div>
@@ -523,6 +515,39 @@ function toggleAcc(btn) {
 }
 
 buildAccordion();
+
+// Samsung Internet Force Dark Mode — re-apply amber as gradient backgrounds and
+// -webkit-text-fill-color after the browser's dark mode algorithm has run.
+(function() {
+  var AMBER = 'rgb(245,166,35)';
+  var GRAD  = 'linear-gradient(' + AMBER + ' 0%,' + AMBER + ' 100%)';
+  function fix() {
+    var bgEls = document.querySelectorAll('.nav-cta,.form-btn,.demo-prompt-icon');
+    for (var i = 0; i < bgEls.length; i++) {
+      bgEls[i].style.backgroundImage = GRAD;
+      bgEls[i].style.backgroundColor = AMBER;
+      bgEls[i].style.color = '#0A0A0F';
+    }
+    var textEls = document.querySelectorAll(
+      '.stat-num,.section-label,.hero-title .accent,.hero-badge,' +
+      '.acc-badge,.acc-dot,.meal-name,.demo-stat-val,.day-total-label,' +
+      '.food-db-title,.survey-btn,.demo-tab.active,.pill-c'
+    );
+    for (var j = 0; j < textEls.length; j++) {
+      textEls[j].style.color = AMBER;
+      textEls[j].style.webkitTextFillColor = AMBER;
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fix);
+  } else {
+    fix();
+  }
+  // Run again after short delays to catch Samsung's late dark-mode pass
+  setTimeout(fix, 100);
+  setTimeout(fix, 500);
+  setTimeout(fix, 1500);
+})();
 
 function handleSubmit() {
   var name = document.getElementById("fname").value.trim();
