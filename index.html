@@ -50,7 +50,7 @@ a, a:link, a:visited { color: inherit; -webkit-tap-highlight-color: transparent;
 html{scroll-behavior:smooth}
 body{color-scheme:only light;background:#0A0A0F;color:#FFFFFF;font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:1px solid transparent}
 .nav-logo img{height:36px;width:auto;display:block}
 .nav-cta{background:linear-gradient(rgb(245,166,35) 0%,rgb(245,166,35) 100%);background-color:rgb(245,166,35);color:#0A0A0F;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:6px;text-decoration:none;white-space:nowrap;display:inline-block}
 .nav-cta:hover{opacity:.85}
@@ -117,9 +117,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .features-grid .feature-card:nth-child(1){grid-column:span 2}
 .features-grid .feature-card:nth-child(6){grid-column:span 2}
-.feature-card{background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:32px;position:relative;overflow:hidden}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgb(245,166,35),transparent);opacity:0;-webkit-transition:opacity .3s;transition:opacity .3s}
-.feature-card:hover{border-color:rgba(245,166,35,0.3);-webkit-transform:translateY(-4px);transform:translateY(-4px)}
+.feature-card{background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:32px;position:relative;overflow:hidden;-webkit-transition:-webkit-transform .35s cubic-bezier(0.16,1,0.3,1),box-shadow .35s cubic-bezier(0.16,1,0.3,1);transition:transform .35s cubic-bezier(0.16,1,0.3,1),box-shadow .35s cubic-bezier(0.16,1,0.3,1)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgb(245,166,35),transparent);opacity:0;-webkit-transition:opacity .35s var(--e-out);transition:opacity .35s var(--e-out)}
+.feature-card:hover{border-color:rgba(245,166,35,0.3);-webkit-transform:translateY(-5px);transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,0.35),0 0 0 1px rgba(245,166,35,0.12)}
 .feature-card:hover::before{opacity:1}
 .feature-icon{display:none}
 .feature-rule{width:28px;height:2px;background:rgb(245,166,35);margin-bottom:18px}
@@ -138,12 +138,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .acc-tag{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-family:'DM Sans',sans-serif}
 .acc-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .acc-badge{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:rgb(245,166,35);-webkit-text-fill-color:rgb(245,166,35);font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;font-family:'Space Mono',monospace}
-.acc-chevron{color:rgba(255,255,255,0.45);font-size:12px;-webkit-transition:-webkit-transform .25s;transition:transform .25s;display:inline-block}
-.acc-item.open .acc-chevron{-webkit-transform:rotate(180deg);transform:rotate(180deg)}
+.acc-chevron{color:rgba(255,255,255,0.45);font-size:12px;display:inline-block}
 .acc-accent{height:2px;background:linear-gradient(90deg,rgb(245,166,35),transparent);display:none}
 .acc-item.open .acc-accent{display:block}
-.acc-body{display:none;padding:4px 24px 20px}
-.acc-item.open .acc-body{display:block}
+.acc-body{overflow:hidden;max-height:0;padding:0 24px;-webkit-transition:max-height .4s cubic-bezier(0.16,1,0.3,1),padding .4s cubic-bezier(0.16,1,0.3,1);transition:max-height .4s cubic-bezier(0.16,1,0.3,1),padding .4s cubic-bezier(0.16,1,0.3,1)}
+.acc-item.open .acc-body{max-height:700px;padding:4px 24px 20px}
 .acc-sub-list{display:flex;flex-direction:column;gap:8px}
 .acc-sub-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
 .acc-sub-item:last-child{border-bottom:none}
@@ -222,7 +221,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
 .footer-links a:hover{color:#FFFFFF}
 .footer-copy{font-size:12px;color:rgba(255,255,255,0.2)}
 
-.fade-up{opacity:0;-webkit-transform:translateY(30px);transform:translateY(30px);-webkit-transition:opacity .7s ease,-webkit-transform .7s ease;transition:opacity .7s ease,transform .7s ease}
+.fade-up{opacity:0;-webkit-transform:translateY(24px);transform:translateY(24px);-webkit-transition:opacity .5s cubic-bezier(0.16,1,0.3,1),-webkit-transform .5s cubic-bezier(0.16,1,0.3,1);transition:opacity .5s cubic-bezier(0.16,1,0.3,1),transform .5s cubic-bezier(0.16,1,0.3,1)}
 .fade-up.visible{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}
 
 @media(max-width:768px){
@@ -246,7 +245,8 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
   .features-grid .feature-card:nth-child(1),.features-grid .feature-card:nth-child(6){grid-column:span 1}
   .core-features{padding:0 20px 60px}
   .acc-trigger{padding:16px 18px}
-  .acc-body{padding:4px 18px 16px}
+  .acc-body{padding:0 18px}
+  .acc-item.open .acc-body{padding:4px 18px 16px}
   .demo{padding:56px 20px}
   .demo-stats-row{grid-template-columns:repeat(2,1fr)}
   .form-row{-webkit-flex-direction:column;flex-direction:column}
@@ -257,6 +257,66 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
   .bottom-cta{padding:72px 20px}
   footer{-webkit-flex-direction:column;flex-direction:column;text-align:center;padding:24px 20px}
   .footer-links{-webkit-justify-content:center;justify-content:center}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION SYSTEM
+   --e-out  dramatic deceleration (entrances)
+   --e-fast fast interactions     (hover/tap)
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --e-out:cubic-bezier(0.16,1,0.3,1);
+  --e-fast:cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Nav scroll state — starts transparent, fills on scroll ── */
+nav{transition:background .3s var(--e-fast),-webkit-backdrop-filter .3s var(--e-fast),backdrop-filter .3s var(--e-fast),border-color .3s var(--e-fast)}
+/* specificity of nav.nav-scrolled (0,1,1,0) beats nav{} (0,0,1,0) — no !important needed */
+nav.nav-scrolled{background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)}
+
+/* ── Hero entrance — one keyframe covers all elements ─────── */
+/* heroRise: opacity+translateY up. hero-right uses same keyframe; the gentle
+   upward shift reads as a confident settle rather than a pop. */
+@keyframes heroRise{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+
+/* Each headline line staggers up — badge 0ms, lines from 100ms, 80ms apart */
+.hl{display:block;animation:heroRise .75s var(--e-out) both}
+.hl:nth-child(1){animation-delay:.1s}
+.hl:nth-child(2){animation-delay:.18s}
+.hl:nth-child(3){animation-delay:.26s}
+
+/* Scoped so bottom-cta .hero-title is unaffected */
+.hero .hero-badge {animation:heroRise .7s var(--e-out) 0s both}
+.hero .hero-sub   {animation:heroRise .7s var(--e-out) .56s both}
+.hero .waitlist-form{animation:heroRise .7s var(--e-out) .70s both}
+.hero .hero-right {animation:heroRise 1s var(--e-out) .40s both}
+
+/* ── CULTURE accent — subtle opacity breath ───────────────── */
+@keyframes accentBreath{0%,100%{opacity:.78}55%{opacity:1}}
+.hero-title .accent{animation:accentBreath 3.5s var(--e-out) 1.6s infinite}
+
+/* ── Buttons — identical base transition, distinct hover ───── */
+.form-btn,.survey-btn{transition:transform 120ms var(--e-fast),box-shadow 200ms var(--e-fast)}
+.form-btn:hover,.form-btn:focus-visible,.survey-btn:hover,.survey-btn:focus-visible{box-shadow:0 0 20px rgba(245,166,35,.25)}
+.form-btn:active,.survey-btn:active{transform:scale(0.97)}
+
+/* ── Demo tab + accordion chevron ───────────────────────── */
+.demo-tab{transition:color .2s var(--e-fast),background .2s var(--e-fast)}
+.acc-chevron{transition:transform .35s var(--e-out)}
+
+/* ── Section header stagger ─────────────────────────────── */
+.section-header .section-label{transition-delay:0ms}
+.section-header .section-title{transition-delay:60ms}
+
+/* ── Reduced motion ─────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+  .fade-up,.hl{opacity:1!important;transform:none!important}
+  .hero .hero-badge,.hero .hero-sub,.hero .waitlist-form,.hero .hero-right{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
@@ -273,7 +333,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-badge">Founding cohort &mdash; limited spots</div>
-      <h1 class="hero-title">YOUR COACH.<br>YOUR <span class="accent">CULTURE.</span><br>YOUR RESULTS.</h1>
+      <h1 class="hero-title"><span class="hl">YOUR COACH.</span><span class="hl">YOUR <span class="accent">CULTURE.</span></span><span class="hl">YOUR RESULTS.</span></h1>
       <p class="hero-sub">The first AI fitness coach built for <strong>how you actually eat</strong>. Rice and dhal. Jollof rice. Hoppers. Your food, your macros, your coach &mdash; in one app.</p>
       <div class="waitlist-form" id="waitlist">
         <div class="form-row">
@@ -309,16 +369,18 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
   </div>
 </section>
 
-<div class="stats-bar">
-  <div class="stat"><div class="stat-num">10</div><div class="stat-label">Regions</div></div>
-  <div class="stat"><div class="stat-num">140+</div><div class="stat-label">Local foods</div></div>
-  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Researchers</div></div>
-  <div class="stat"><div class="stat-num">3B+</div><div class="stat-label">People overlooked</div></div>
+<div class="stats-bar fade-up">
+  <div class="stat"><div class="stat-num" data-count="10" data-suffix="">10</div><div class="stat-label">Regions</div></div>
+  <div class="stat"><div class="stat-num" data-count="140" data-suffix="+">140+</div><div class="stat-label">Local foods</div></div>
+  <div class="stat"><div class="stat-num" data-count="8" data-suffix="">8</div><div class="stat-label">Researchers</div></div>
+  <div class="stat"><div class="stat-num" data-count="3" data-suffix="B+">3B+</div><div class="stat-label">People overlooked</div></div>
 </div>
 
 <section class="features">
-  <div class="section-label">What makes APEX different</div>
-  <h2 class="section-title">BUILT DIFFERENT.<br>FOR THE REST OF US.</h2>
+  <div class="section-header fade-up">
+    <div class="section-label">What makes APEX different</div>
+    <h2 class="section-title">BUILT DIFFERENT.<br>FOR THE REST OF US.</h2>
+  </div>
   <div class="features-grid">
     <div class="feature-card fade-up"><div class="feature-rule"></div><div class="feature-title">AI That Knows You</div><div class="feature-desc">Your coach learns your goals, equipment, injuries, and food culture from day one. Every plan is built for you, not copied from a template.</div></div>
     <div class="feature-card fade-up"><div class="feature-rule"></div><div class="feature-title">Your Food, Your Macros</div><div class="feature-desc">Forget chicken and broccoli. APEX builds your diet around rice, dhal, jollof, hoppers, and 140+ local foods with precise macro tracking.</div></div>
@@ -330,7 +392,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
 </section>
 
 <section class="core-features">
-  <div class="fade-up">
+  <div class="section-header fade-up">
     <div class="section-label">Everything inside APEX</div>
     <h2 class="section-title">THE FULL <span style="color:rgb(245,166,35)">FEATURE SET.</span></h2>
   </div>
@@ -371,7 +433,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
 
 <section class="culture">
   <div class="culture-inner">
-    <div>
+    <div class="fade-up">
       <div class="section-label">The cultural edge</div>
       <h2 class="section-title">FINALLY AN APP<br>THAT GETS IT.</h2>
       <p style="color:rgba(255,255,255,0.45);font-size:15px;line-height:1.8;margin-bottom:20px">Every major fitness app was built for Western diets. They do not know what hoppers do to your carbs. They do not understand jollof rice before leg day. They have never tracked egusi soup.<br><br>APEX was built for the 3 billion people they ignored.</p>
@@ -399,7 +461,7 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
 
 <section class="bottom-cta">
   <div class="bottom-cta-bg"></div>
-  <div class="bottom-cta-inner">
+  <div class="bottom-cta-inner fade-up">
     <div class="section-label">Get early access</div>
     <h2 class="hero-title" style="margin-bottom:16px">BE FIRST.<br>TRAIN <span class="accent">SMARTER.</span></h2>
     <p class="hero-sub" style="margin:0 auto 40px;max-width:480px">Founding members get locked-in pricing, early access, and a direct line to the team. This window closes when the app ships.</p>
@@ -418,14 +480,103 @@ footer{background:#111118;border-top:1px solid rgba(255,255,255,0.07);padding:32
 </footer>
 
 <script>
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry, i) {
-    if (entry.isIntersecting) {
-      setTimeout(function() { entry.target.classList.add("visible"); }, i * 100);
+/* ─────────────────────────────────────────────────────────────
+   MOTION SYSTEM
+   ─────────────────────────────────────────────────────────────
+
+   1. Set all stagger delays FIRST (before observe), so any
+      element already in viewport gets the correct delay.
+   2. Single querySelectorAll pass — classify inline.
+   3. Stats-bar uses one observer with two thresholds:
+      20% → show (.visible), 40% → start counters.
+   ───────────────────────────────────────────────────────────── */
+
+(function() {
+  'use strict';
+
+  /* ── Scroll reveal ───────────────────────────────────────── */
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var delay = el._revealDelay || 0;
+      setTimeout(function() { el.classList.add('visible'); }, delay);
+      revealObserver.unobserve(el);
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+
+  /* Single pass: assign stagger delays via style.transitionDelay,
+     store reveal delay on element, then observe */
+  var featureIdx = 0, accIdx = 0;
+  document.querySelectorAll('.fade-up').forEach(function(el) {
+    if (el.classList.contains('feature-card')) {
+      el.style.transitionDelay = (featureIdx * 80) + 'ms';
+      el._revealDelay = featureIdx * 90;
+      featureIdx++;
+    } else if (el.classList.contains('acc-item')) {
+      el._revealDelay = accIdx * 60;
+      accIdx++;
     }
+    revealObserver.observe(el);
   });
-}, { threshold: 0.1 });
-document.querySelectorAll(".fade-up").forEach(function(el) { observer.observe(el); });
+
+  /* ── Navbar scroll opacity ───────────────────────────────── */
+  var nav = document.querySelector('nav');
+  if (nav) {
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  /* ── Stat counters ───────────────────────────────────────── */
+  var statsBar = document.querySelector('.stats-bar');
+  if (!statsBar) return;
+  var counted = false;
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function countUp(el, target, suffix, duration) {
+    var start = null;
+    var prev = -1;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var val = Math.round(easeOut(progress) * target);
+      /* skip DOM write when rounded value hasn't changed */
+      if (val !== prev) { el.textContent = val + suffix; prev = val; }
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* One observer for the stats bar handles both reveal + counter.
+     Threshold array fires the callback at 12% and 40%. */
+  var statsObserver = new IntersectionObserver(function(entries) {
+    var ratio = entries[0].intersectionRatio;
+    if (ratio >= 0.2) statsBar.classList.add('visible');
+    if (ratio >= 0.4 && !counted) {
+      counted = true;
+      statsBar.querySelectorAll('.stat-num[data-count]').forEach(function(el, i) {
+        var target = parseInt(el.getAttribute('data-count'), 10);
+        var suffix = el.getAttribute('data-suffix') || '';
+        setTimeout(function() { countUp(el, target, suffix, 1100); }, i * 180);
+      });
+    }
+    if (ratio >= 0.4 && counted) statsObserver.unobserve(statsBar);
+  }, { threshold: [0.2, 0.4] });
+
+  statsObserver.observe(statsBar);
+  /* Remove statsBar from the generic revealObserver — it's handled above */
+  revealObserver.unobserve(statsBar);
+
+
+})();
 
 function showDay(day, el) {
   document.querySelectorAll(".demo-content").forEach(function(e) { e.classList.remove("active"); });
