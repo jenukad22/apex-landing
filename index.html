@@ -489,6 +489,7 @@ nav.nav-scrolled{background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20p
    2. Single querySelectorAll pass — classify inline.
    3. Stats-bar uses one observer with two thresholds:
       20% → show (.visible), 40% → start counters.
+      General fade-up uses 12% — feature cards are tall and need a lower bar. */
    ───────────────────────────────────────────────────────────── */
 
 (function() {
@@ -503,7 +504,7 @@ nav.nav-scrolled{background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20p
       setTimeout(function() { el.classList.add('visible'); }, delay);
       revealObserver.unobserve(el);
     });
-  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
   /* Single pass: assign stagger delays via style.transitionDelay,
      store reveal delay on element, then observe */
