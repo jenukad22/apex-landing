@@ -575,6 +575,8 @@ nav.nav-scrolled{background:rgba(10,10,15,0.95);-webkit-backdrop-filter:blur(20p
   statsObserver.observe(statsBar);
   /* Remove statsBar from the generic revealObserver — it's handled above */
   revealObserver.unobserve(statsBar);
+  /* Expose so buildAccordion (runs after this IIFE) can register dynamic elements */
+  window._revealObserver = revealObserver;
 
 
 })();
@@ -678,8 +680,9 @@ function buildAccordion() {
       return "<div class=\"acc-sub-item\"><div class=\"acc-dot\"></div><div class=\"acc-sub-text\">" + item + "</div></div>";
     }).join("");
     el.innerHTML = "<button class=\"acc-trigger\" onclick=\"toggleAcc(this)\"><div class=\"acc-left\"><div><div class=\"acc-name\">" + feat.name + "</div><div class=\"acc-tag\">" + feat.tag + "</div></div></div><div class=\"acc-right\"><div class=\"acc-badge\">" + feat.badge + "</div><span class=\"acc-chevron\">&#9660;</span></div></button><div class=\"acc-accent\"></div><div class=\"acc-body\"><div class=\"acc-sub-list\">" + itemsHtml + "</div></div>";
+    el._revealDelay = i * 60;
     grid.appendChild(el);
-    observer.observe(el);
+    if (window._revealObserver) window._revealObserver.observe(el);
   });
 }
 
